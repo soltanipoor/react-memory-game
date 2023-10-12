@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import image1Url from "./assets/image-1.png";
 import image2Url from "./assets/image-2.png";
 import image3Url from "./assets/image-3.png";
@@ -22,35 +22,79 @@ const images = [
 import "./App.css";
 import Item from "./components/Item";
 
+const generateRandomItems = () =>
+  Array.from({ length: 16 })
+    .map((_, i) => {
+      return {
+        id: i + 1,
+        identifier: Math.floor(i / 2),
+        image: images[Math.floor(i / 2)],
+      };
+    })
+    .sort(() => Math.random() - 0.5);
+
 function App() {
+  const pending = useRef(false);
+
   const [selectedItemIds, setSelectedItemIds] = useState([]);
 
-  const [items, setItems] = useState(() =>
-    Array.from({ length: 16 })
-      .map((_, i) => {
-        return { id: i + 1, image: images[Math.floor(i / 2)] };
-      })
-      .sort(() => Math.random() - 0.5)
-  );
+  const [items, setItems] = useState(generateRandomItems);
 
   const handleClick = (item) => {
+    if (pending.current) return;
+
     setSelectedItemIds([...selectedItemIds, item.id]);
+
+    if (selectedItemIds.length % 2 !== 0) {
+      pending.current = true;
+
+      // compare
+      const lastItemId = selectedItemIds[selectedItemIds.length - 1];
+      const lastItem = items.find((item) => item.id === lastItemId);
+
+      if (item.identifier !== lastItem.identifier) {
+        setTimeout(() => {
+          setSelectedItemIds(selectedItemIds.filter((i) => i != lastItemId));
+          pending.current = false;
+        }, 1000);
+      } else {
+        pending.current = false;
+      }
+    }
+  };
+
+  const startGame = () => {
+    const newItems = generateRandomItems();
+
+    setItems(newItems);
+
+    setTimeout(() => {
+      setSelectedItemIds(newItems.map((i) => i.id));
+    }, 0);
+
+    setTimeout(() => {
+      setSelectedItemIds([]);
+    }, 1000);
   };
 
   return (
-    <>
+    <div className="game-wrapper">
       <div className="memory-game">
         {items.map((item, i) => (
           <Item
-            key={item.id}
             index={i + 1}
             image={item.image}
+            key={item.id}
             onClick={() => handleClick(item)}
             isShow={selectedItemIds.includes(item.id)}
           />
         ))}
       </div>
-    </>
+
+      <button className="game-button" onClick={startGame}>
+        شروع بازی
+      </button>
+    </div>
   );
 }
 

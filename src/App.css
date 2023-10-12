@@ -1,3 +1,10 @@
+
+.game-wrapper {
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
 .memory-game {
   gap: 10px;
   display: grid;
@@ -8,18 +15,51 @@
 .memory-game__item {
   width: 80px;
   height: 80px;
-  background-color: red;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: wheat;
-  font-size: 30px;
-  border-radius: 5px;
-  overflow: hidden;
+  position: relative;
+  perspective: 100px;
+  transform-style: preserve-3d;
+  transition: transform ease 400ms;
 }
 
-.memory-game__item img {
+.memory-game__item--show {
+  transform: rotateY(180deg);
+}
+
+.memory-game__item-front {
+  top: 0;
+  left: 0;
+  z-index: 2;
   width: 100%;
   height: 100%;
+  display: flex;
+  color: wheat;
+  cursor: pointer;
+  font-size: 30px;
+  position: absolute;
+  border-radius: 5px;
+  align-items: center;
+  background-color: red;
+  justify-content: center;
+  backface-visibility: hidden;
+  box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.memory-game__item-back {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
   object-fit: cover;
+  position: absolute;
+  border-radius: 5px;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.game-button {
+  border: none;
+  cursor: pointer;
+  background: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background: yellow;
 }

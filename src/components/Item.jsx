@@ -1,7 +1,11 @@
 const Item = ({ index, image, isShow, onClick }) => {
   return (
-    <div className="memory-game__item" onClick={onClick}>
-      {isShow ? <img src={image} /> : index}
+    <div
+      onClick={onClick}
+      className={`memory-game__item ${isShow ? "memory-game__item--show" : ""}`}
+    >
+      <div className="memory-game__item-front">{index}</div>
+      <img src={image} className="memory-game__item-back" />
     </div>
   );
 };
